@@ -27,11 +27,11 @@ public class BindingPet extends BaseObservable {
 
     public void setTitle(String title) {
         this.title = title;
-        notifyPropertyChanged(BR.text);
+        notifyPropertyChanged(BR.title);
     }
 
     public void setUrl(String url) {
         this.url = url;
-        notifyPropertyChanged(BR.imageUrl);
+        notifyPropertyChanged(BR.url);
     }
 }
