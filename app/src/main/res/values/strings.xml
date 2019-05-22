@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">zimad_test</string>
+    <string name="title_cats">Cats</string>
+    <string name="title_dogs">Dogs</string>
+</resources>
