@@ -2,8 +2,8 @@ package com.gimadeev.zimad_test.presentaion;
 
 import com.gimadeev.zimad_test.data.model.DataRow;
 import com.gimadeev.zimad_test.domain.interactor.ListPetsUseCase;
-import com.gimadeev.zimad_test.presentaion.binding.BindingRow;
-import com.gimadeev.zimad_test.presentaion.binding.RowConverter;
+import com.gimadeev.zimad_test.presentaion.binding.BindingPet;
+import com.gimadeev.zimad_test.presentaion.binding.PetConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +19,13 @@ import io.reactivex.functions.Consumer;
 public class PetListViewModel extends ViewModel implements LifecycleObserver {
 
     private ListPetsUseCase listPetsUseCase;
-    private MutableLiveData<ViewState<List<BindingRow>>> state = new MutableLiveData();
+    private MutableLiveData<ViewState<List<BindingPet>>> state = new MutableLiveData();
 
     public PetListViewModel(ListPetsUseCase listPetsUseCase) {
         this.listPetsUseCase = listPetsUseCase;
     }
 
-    public LiveData<ViewState<List<BindingRow>>> getState() {
+    public LiveData<ViewState<List<BindingPet>>> getState() {
         return state;
     }
 
@@ -37,9 +37,9 @@ public class PetListViewModel extends ViewModel implements LifecycleObserver {
                new Consumer<List<DataRow>>() {
                 @Override
                 public void accept(List<DataRow> dataRows) throws Exception {
-                    List<BindingRow> rows = new ArrayList<>(dataRows.size());
+                    List<BindingPet> rows = new ArrayList<>(dataRows.size());
                     for (int i = 0; i < rows.size(); ++i) {
-                        rows.add(RowConverter.fromData(dataRows.get(i)));
+                        rows.add(PetConverter.fromData(dataRows.get(i)));
                     }
                     state.postValue(new ViewState(ViewState.Status.SUCCESS, rows));
                 }
