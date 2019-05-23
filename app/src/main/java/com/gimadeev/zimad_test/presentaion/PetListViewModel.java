@@ -1,6 +1,6 @@
 package com.gimadeev.zimad_test.presentaion;
 
-import com.gimadeev.zimad_test.data.model.DataRow;
+import com.gimadeev.zimad_test.data.model.DataPet;
 import com.gimadeev.zimad_test.domain.interactor.ListPetsUseCase;
 import com.gimadeev.zimad_test.presentaion.binding.BindingPet;
 import com.gimadeev.zimad_test.presentaion.binding.PetConverter;
@@ -34,22 +34,21 @@ public class PetListViewModel extends ViewModel implements LifecycleObserver {
         if (state.getValue() == null) {
             state.postValue(new ViewState(ViewState.Status.LOADING));
             listPetsUseCase.execute(type,
-               new Consumer<List<DataRow>>() {
+               new Consumer<List<DataPet>>() {
                 @Override
-                public void accept(List<DataRow> dataRows) throws Exception {
-                    List<BindingPet> rows = new ArrayList<>(dataRows.size());
-                    for (int i = 0; i < rows.size(); ++i) {
-                        rows.add(PetConverter.fromData(dataRows.get(i)));
+                public void accept(List<DataPet> dataPets) throws Exception {
+                    List<BindingPet> pets = new ArrayList<>(dataPets.size());
+                    for (DataPet dataPet : dataPets ) {
+                        pets.add(PetConverter.fromData(dataPet));
                     }
-                    state.postValue(new ViewState(ViewState.Status.SUCCESS, rows));
+                    state.postValue(new ViewState(ViewState.Status.SUCCESS, pets));
                 }
             }, new Consumer<Throwable>() {
                 @Override
                 public void accept(Throwable throwable) throws Exception {
                     state.postValue(new ViewState(ViewState.Status.ERROR, throwable));
                 }
-            },
-                    null);
+            });
         }
     }
 

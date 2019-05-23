@@ -1,4 +1,6 @@
 package com.gimadeev.zimad_test.dogs;
 
-public class DogDetailsFragment {
+import androidx.fragment.app.Fragment;
+
+public class DogDetailsFragment extends Fragment {
 }

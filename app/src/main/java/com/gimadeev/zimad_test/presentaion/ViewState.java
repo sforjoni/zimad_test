@@ -2,7 +2,7 @@ package com.gimadeev.zimad_test.presentaion;
 
 public class ViewState<T> {
 
-    enum Status {
+    public enum Status {
         LOADING, SUCCESS, ERROR
     }
 

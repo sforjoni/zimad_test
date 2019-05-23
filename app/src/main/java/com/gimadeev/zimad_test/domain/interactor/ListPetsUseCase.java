@@ -1,15 +1,15 @@
 package com.gimadeev.zimad_test.domain.interactor;
 
 import com.gimadeev.zimad_test.data.PetRepository;
-import com.gimadeev.zimad_test.data.model.DataRow;
-import com.gimadeev.zimad_test.domain.FlowableUseCase;
+import com.gimadeev.zimad_test.data.model.DataPet;
+import com.gimadeev.zimad_test.domain.MaybeUseCase;
 import com.gimadeev.zimad_test.domain.executor.PostExecutionThread;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
-public class ListPetsUseCase extends FlowableUseCase<List<DataRow>, String> {
+public class ListPetsUseCase extends MaybeUseCase<List<DataPet>, String> {
 
     private PetRepository repository;
 
@@ -19,7 +19,7 @@ public class ListPetsUseCase extends FlowableUseCase<List<DataRow>, String> {
     }
 
     @Override
-    protected Flowable<List<DataRow>> buildFlowable(String type) {
+    protected Maybe<List<DataPet>> buildMaybe(String type) {
         return repository.loadPets(type);
     }
 }

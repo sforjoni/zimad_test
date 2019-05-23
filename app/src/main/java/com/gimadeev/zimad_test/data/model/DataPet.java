@@ -1,11 +1,11 @@
 package com.gimadeev.zimad_test.data.model;
 
-public class DataRow {
+public class DataPet {
 
     private String url;
     private String title;
 
-    public DataRow(String url, String title) {
+    public DataPet(String url, String title) {
         this.url = url;
         this.title = title;
     }

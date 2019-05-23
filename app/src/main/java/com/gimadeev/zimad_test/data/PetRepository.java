@@ -1,12 +1,12 @@
 package com.gimadeev.zimad_test.data;
 
-import com.gimadeev.zimad_test.data.model.DataRow;
+import com.gimadeev.zimad_test.data.model.DataPet;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
 public interface PetRepository {
 
-    Flowable<List<DataRow>> loadPets(String type);
+    Maybe<List<DataPet>> loadPets(String type);
 }
