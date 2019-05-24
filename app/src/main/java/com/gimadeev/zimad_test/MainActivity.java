@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupTabLayout(int selectedPosition) {
         tabs = findViewById(R.id.bottomNavigation);
 
-        tabs.addTab(tabs.newTab().setText("Cats"));
-        tabs.addTab(tabs.newTab().setText("Dogs"));
+        tabs.addTab(tabs.newTab().setText(R.string.title_cats));
+        tabs.addTab(tabs.newTab().setText(R.string.title_dogs));
 
         tabs.getTabAt(selectedPosition).select();
 
