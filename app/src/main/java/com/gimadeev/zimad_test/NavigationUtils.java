@@ -5,12 +5,15 @@ import android.util.SparseArray;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -26,7 +29,7 @@ public class NavigationUtils {
 
         final Outer<Integer> firstFragmentGraphId = new Outer<>(0);
 
-        for (int i = 0; i < navGraphIds.size() - 1; ++i) {
+        for (int i = 0; i < navGraphIds.size(); ++i) {
             String fragmentTag = getFragmentTag(i);
             Integer id = navGraphIds.get(i);
 
@@ -65,7 +68,7 @@ public class NavigationUtils {
                                     .attach(selectedFragment)
                                     .setPrimaryNavigationFragment(selectedFragment);
 
-                            for (int i = 0; i < graphIdToTagMap.size() - 1; ++i) {
+                            for (int i = 0; i < graphIdToTagMap.size(); ++i) {
                                 String tag = graphIdToTagMap.get(i);
                                 if (tag != newlySelectedItemTag) {
                                     transaction.detach(fragmentManager.findFragmentByTag(firstFragmentTag.getValue()));
@@ -119,8 +122,13 @@ public class NavigationUtils {
         return selectedNavController;
     }
 
+    public static void setupActionBarWithNavController(NavController navController, AppCompatActivity activity) {
+        AppBarConfiguration configuration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(activity, navController, configuration);
+    }
+
     private static void setupDeepLinks(BottomNavigationView navigationView, List<Integer> navGraphIds, FragmentManager fragmentManager, Integer containerId, Intent intent ) {
-        for (int i = 0; i < navGraphIds.size() - 1; ++i) {
+        for (int i = 0; i < navGraphIds.size(); ++i) {
             String fragmentTag = getFragmentTag(i);
             Integer id = navGraphIds.get(i);
 
@@ -171,7 +179,7 @@ public class NavigationUtils {
 
     private static Boolean isOnBackStack(FragmentManager fragmentManager, String backStackName) {
         int backStackCount = fragmentManager.getBackStackEntryCount();
-        for (int i = 0; i < backStackCount - 1; ++i) {
+        for (int i = 0; i < backStackCount; ++i) {
             if (fragmentManager.getBackStackEntryAt(i).getName().equals(backStackName)) {
                 return true;
             }
@@ -180,7 +188,7 @@ public class NavigationUtils {
     }
 
     private static String getFragmentTag(Integer index) {
-        return "bottomNavigation" + index;
+        return "bottomNavigation#" + index;
     }
 
     private static class Outer<T> {

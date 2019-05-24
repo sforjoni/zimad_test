@@ -1,6 +1,7 @@
-package com.gimadeev.zimad_test.cats;
+package com.gimadeev.zimad_test.fragments;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,23 +26,32 @@ import com.gimadeev.zimad_test.presentaion.binding.BindingPet;
 
 import java.util.List;
 
-public class CatListFragment extends Fragment {
+public abstract class PetListFragment extends Fragment {
 
     private PetListViewModel viewModel;
+
+    private RecyclerView list;
+    private Parcelable listState;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(this, new PetVmFactory()).get(PetListViewModel.class);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_pet, container, false);
+        return inflater.inflate(R.layout.fragment_pets, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        list = view.findViewById(R.id.rvPets);
+        list.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        viewModel = ViewModelProviders.of(this, new PetVmFactory()).get(PetListViewModel.class);
-
-        viewModel.getState().observe(this, new Observer<ViewState<List<BindingPet>>>() {
+        viewModel.loadPets(getPetType()).observe(this, new Observer<ViewState<List<BindingPet>>>() {
             @Override
             public void onChanged(ViewState<List<BindingPet>> viewState) {
                 switch (viewState.status) {
@@ -51,13 +63,23 @@ public class CatListFragment extends Fragment {
                 }
             }
         });
+    }
 
-        viewModel.loadPets("cat");
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (listState != null) {
+            list.getLayoutManager().onRestoreInstanceState(listState);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        listState = list.getLayoutManager().onSaveInstanceState();
     }
 
     private void updateList(List<BindingPet> pets) {
-        RecyclerView list = getView().findViewById(R.id.rvPets);
-        list.setLayoutManager(new LinearLayoutManager(requireContext()));
         list.setAdapter(new PetAdapter(pets, new PetAdapter.OnPetClick() {
             @Override
             public void onClick(BindingPet pet) {
@@ -67,6 +89,10 @@ public class CatListFragment extends Fragment {
     }
 
     private void showDetails(BindingPet pet) {
-
+        NavHostFragment.findNavController(this).navigate(getDetailsAction(pet));
     }
+
+    protected abstract String getPetType();
+
+    protected abstract NavDirections getDetailsAction(BindingPet pet);
 }

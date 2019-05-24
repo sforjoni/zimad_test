@@ -1,5 +1,10 @@
 package com.gimadeev.zimad_test.presentaion;
 
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import com.gimadeev.zimad_test.data.model.DataPet;
 import com.gimadeev.zimad_test.domain.interactor.ListPetsUseCase;
 import com.gimadeev.zimad_test.presentaion.binding.BindingPet;
@@ -8,12 +13,6 @@ import com.gimadeev.zimad_test.presentaion.binding.PetConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ViewModel;
 import io.reactivex.functions.Consumer;
 
 public class PetListViewModel extends ViewModel implements LifecycleObserver {
@@ -25,12 +24,7 @@ public class PetListViewModel extends ViewModel implements LifecycleObserver {
         this.listPetsUseCase = listPetsUseCase;
     }
 
-    public LiveData<ViewState<List<BindingPet>>> getState() {
-        return state;
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    public void loadPets(String type) {
+    public LiveData<ViewState<List<BindingPet>>> loadPets(String type) {
         if (state.getValue() == null) {
             state.postValue(new ViewState(ViewState.Status.LOADING));
             listPetsUseCase.execute(type,
@@ -50,6 +44,8 @@ public class PetListViewModel extends ViewModel implements LifecycleObserver {
                 }
             });
         }
+
+        return state;
     }
 
     @Override
