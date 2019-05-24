@@ -2,7 +2,7 @@ package com.gimadeev.zimad_test.presentaion;
 
 public class ViewState<T> {
 
-    enum Status {
+    public enum Status {
         LOADING, SUCCESS, ERROR
     }
 
@@ -22,6 +22,5 @@ public class ViewState<T> {
     public ViewState(Status status, T data) {
         this.status = status;
         this.data = data;
-        this.error = error;
     }
 }
