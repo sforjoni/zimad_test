@@ -2,9 +2,7 @@ package com.gimadeev.zimad_test;
 
 import android.content.Intent;
 import android.util.SparseArray;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -15,19 +13,21 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 
 public class NavigationUtils {
 
-    public static LiveData<NavController> setupWithNavController(final BottomNavigationView navigationView, List<Integer> navGraphIds,
+    public static LiveData<NavController> setupWithNavController(final AppCompatActivity activity, final TabLayout navigationView, final List<Integer> navGraphIds,
                                                                  final FragmentManager fragmentManager, final Integer containerId, Intent intent) {
 
         final SparseArray<String> graphIdToTagMap = new SparseArray<>();
         final MutableLiveData<NavController> selectedNavController = new MutableLiveData<>();
 
         final Outer<Integer> firstFragmentGraphId = new Outer<>(0);
+
+        final SparseArray<Integer> tabPositionToGraphId = new SparseArray<>();
 
         for (int i = 0; i < navGraphIds.size(); ++i) {
             String fragmentTag = getFragmentTag(i);
@@ -39,8 +39,9 @@ public class NavigationUtils {
                 firstFragmentGraphId.setValue(graphId);
             }
             graphIdToTagMap.put(graphId, fragmentTag);
+            tabPositionToGraphId.put(i, graphId);
 
-            if (navigationView.getSelectedItemId() == graphId) {
+            if (Integer.valueOf(graphId).equals(tabPositionToGraphId.get(navigationView.getSelectedTabPosition()))) {
                 selectedNavController.setValue(navHostFragment.getNavController());
                 attachNavHostFragment(fragmentManager, navHostFragment, i == 0);
             } else {
@@ -48,17 +49,17 @@ public class NavigationUtils {
             }
         }
 
-        final Outer<String> selectedItemTag = new Outer<>(graphIdToTagMap.get(navigationView.getSelectedItemId()));
+        final Outer<String> selectedItemTag = new Outer<>(graphIdToTagMap.get(tabPositionToGraphId.get(navigationView.getSelectedTabPosition())));
         final Outer<String> firstFragmentTag = new Outer<>(graphIdToTagMap.get(firstFragmentGraphId.getValue()));
         final Outer<Boolean> isOnFirstFragment = new Outer<>(selectedItemTag.getValue() == firstFragmentTag.getValue());
 
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        navigationView.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            public void onTabSelected(TabLayout.Tab tab) {
                 if (fragmentManager.isStateSaved()) {
-                    return false;
+                    return;
                 } else {
-                    String newlySelectedItemTag = graphIdToTagMap.get(item.getItemId());
+                    String newlySelectedItemTag = graphIdToTagMap.get(tabPositionToGraphId.get(tab.getPosition()));
                     if (selectedItemTag.getValue() != newlySelectedItemTag) {
                         fragmentManager.popBackStack(firstFragmentTag.getValue(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         NavHostFragment selectedFragment = (NavHostFragment) fragmentManager.findFragmentByTag(newlySelectedItemTag);
@@ -89,25 +90,31 @@ public class NavigationUtils {
 
                         isOnFirstFragment.setValue(selectedItemTag.getValue() == firstFragmentTag.getValue());
                         selectedNavController.setValue(selectedFragment.getNavController());
-                        return true;
+                        return;
                     } else {
-                        return false;
+                        return;
                     }
                 }
             }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                String newlySelectedItemTag = graphIdToTagMap.get(tabPositionToGraphId.get(tab.getPosition()));
+                NavHostFragment selectedFragment = (NavHostFragment) fragmentManager.findFragmentByTag(newlySelectedItemTag);
+                NavController controller = selectedFragment.getNavController();
+                controller.popBackStack(controller.getGraph().getStartDestination(), false);
+            }
         });
 
-        setupItemReselected(navigationView, graphIdToTagMap, fragmentManager);
-
-        setupDeepLinks(navigationView, navGraphIds, fragmentManager, containerId, intent);
+        setupDeepLinks(navigationView, navGraphIds, tabPositionToGraphId, fragmentManager, containerId, intent);
 
         fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                if (!isOnFirstFragment.getValue() && !isOnBackStack(fragmentManager, firstFragmentTag.getValue())) {
-                    navigationView.setSelectedItemId(firstFragmentGraphId.getValue());
-                }
-
                 NavController controller = selectedNavController.getValue();
 
                 if (controller != null) {
@@ -115,7 +122,6 @@ public class NavigationUtils {
                         controller.navigate(controller.getGraph().getId());
                     }
                 }
-
             }
         });
 
@@ -127,28 +133,21 @@ public class NavigationUtils {
         NavigationUI.setupActionBarWithNavController(activity, navController, configuration);
     }
 
-    private static void setupDeepLinks(BottomNavigationView navigationView, List<Integer> navGraphIds, FragmentManager fragmentManager, Integer containerId, Intent intent ) {
+    private static void setupDeepLinks(TabLayout navigationView, List<Integer> navGraphIds, final SparseArray<Integer> tabPositionToGraphId, FragmentManager fragmentManager, Integer containerId, Intent intent ) {
         for (int i = 0; i < navGraphIds.size(); ++i) {
             String fragmentTag = getFragmentTag(i);
             Integer id = navGraphIds.get(i);
 
             NavHostFragment navHostFragment = obtainNavHostFragment(fragmentManager, fragmentTag, id, containerId);
             if (navHostFragment.getNavController().handleDeepLink(intent)) {
-                navigationView.setSelectedItemId(navHostFragment.getNavController().getGraph().getId());
+                for (int t = 0; t < tabPositionToGraphId.size(); ++t) {
+                    if (tabPositionToGraphId.get(t).equals(navHostFragment.getNavController().getGraph().getId())) {
+                        navigationView.getTabAt(t).select();
+                        break;
+                    }
+                }
             }
         }
-    }
-
-    private static void setupItemReselected(BottomNavigationView navigationView, final SparseArray<String> graphIdToTagMap, final FragmentManager fragmentManager) {
-        navigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
-            @Override
-            public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
-                String newlySelectedItemTag = graphIdToTagMap.get(menuItem.getItemId());
-                NavHostFragment selectedFragment = (NavHostFragment) fragmentManager.findFragmentByTag(newlySelectedItemTag);
-                NavController controller = selectedFragment.getNavController();
-                controller.popBackStack(controller.getGraph().getStartDestination(), false);
-            }
-        });
     }
 
     private static void detachNavHostFragment(FragmentManager fragmentManager, NavHostFragment navHostFragment) {

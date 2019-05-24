@@ -15,9 +15,13 @@
         android:layout_weight="1" />
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabBottom"
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="fixed"
-        />
+        app:tabMaxWidth="0dp"
+        app:tabGravity="fill"
+        app:tabMode="fixed">
+
+    </com.google.android.material.tabs.TabLayout>
+
 </LinearLayout>
