@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             add(R.navigation.dog);
         }};
 
-        navController = setupWithNavController(this, tabs, navGraphIds, getSupportFragmentManager(), R.id.navHostContainer, getIntent());
+        navController = setupWithNavController(tabs, navGraphIds, getSupportFragmentManager(), R.id.navHostContainer, getIntent());
         navController.observe(this, new Observer<NavController>() {
             @Override
             public void onChanged(NavController controller) {

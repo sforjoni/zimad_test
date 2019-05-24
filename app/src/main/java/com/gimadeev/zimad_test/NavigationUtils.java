@@ -19,7 +19,7 @@ import java.util.List;
 
 public class NavigationUtils {
 
-    public static LiveData<NavController> setupWithNavController(final AppCompatActivity activity, final TabLayout navigationView, final List<Integer> navGraphIds,
+    public static LiveData<NavController> setupWithNavController(final TabLayout navigationView, final List<Integer> navGraphIds,
                                                                  final FragmentManager fragmentManager, final Integer containerId, Intent intent) {
 
         final SparseArray<String> graphIdToTagMap = new SparseArray<>();
