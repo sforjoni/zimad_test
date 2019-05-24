@@ -1,4 +1,4 @@
-package com.gimadeev.zimad_test;
+package com.gimadeev.zimad_test.fragments;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gimadeev.zimad_test.R;
 import com.gimadeev.zimad_test.databinding.ItemPetBinding;
 import com.gimadeev.zimad_test.presentaion.binding.BindingPet;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

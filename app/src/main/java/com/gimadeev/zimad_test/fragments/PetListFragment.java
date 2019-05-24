@@ -17,7 +17,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gimadeev.zimad_test.PetAdapter;
 import com.gimadeev.zimad_test.R;
 import com.gimadeev.zimad_test.presentaion.PetListViewModel;
 import com.gimadeev.zimad_test.presentaion.PetVmFactory;
