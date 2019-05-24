@@ -22,6 +22,5 @@ public class ViewState<T> {
     public ViewState(Status status, T data) {
         this.status = status;
         this.data = data;
-        this.error = error;
     }
 }

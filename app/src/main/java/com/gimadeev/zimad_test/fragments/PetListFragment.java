@@ -50,6 +50,12 @@ public abstract class PetListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         list = view.findViewById(R.id.rvPets);
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
+        list.setAdapter(new PetAdapter(new PetAdapter.OnPetClick() {
+            @Override
+            public void onClick(BindingPet pet) {
+                showDetails(pet);
+            }
+        }));
 
         viewModel.loadPets(getPetType()).observe(this, new Observer<ViewState<List<BindingPet>>>() {
             @Override
@@ -80,12 +86,9 @@ public abstract class PetListFragment extends Fragment {
     }
 
     private void updateList(List<BindingPet> pets) {
-        list.setAdapter(new PetAdapter(pets, new PetAdapter.OnPetClick() {
-            @Override
-            public void onClick(BindingPet pet) {
-                showDetails(pet);
-            }
-        }));
+        PetAdapter adapter = (PetAdapter) list.getAdapter();
+        adapter.setPets(pets);
+        adapter.notifyDataSetChanged();
     }
 
     private void showDetails(BindingPet pet) {

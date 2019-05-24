@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gimadeev.zimad_test.databinding.ItemPetBinding;
 import com.gimadeev.zimad_test.presentaion.binding.BindingPet;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder>{
@@ -18,9 +20,13 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder>{
     private List<BindingPet> pets;
     private OnPetClick onPetClickListener;
 
-    public PetAdapter(List<BindingPet> pets, OnPetClick onPetClickListener) {
-        this.pets = pets;
+    public PetAdapter(OnPetClick onPetClickListener) {
+        this.pets = Collections.emptyList();
         this.onPetClickListener = onPetClickListener;
+    }
+
+    public void setPets(List<BindingPet> pets) {
+        this.pets = pets;
     }
 
     @NonNull
