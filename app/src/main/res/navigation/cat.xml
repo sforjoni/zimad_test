@@ -6,7 +6,7 @@
     <fragment
         android:id="@+id/catListFragment"
         android:name="com.gimadeev.zimad_test.fragments.cats.CatListFragment"
-        android:label="CatDetailsFragment" >
+        android:label="@string/title_cats" >
         <action
             android:id="@+id/action_catListFragment_to_catDetailsFragment"
             app:destination="@id/catDetailsFragment" />
@@ -15,7 +15,7 @@
     <fragment
         android:id="@+id/catDetailsFragment"
         android:name="com.gimadeev.zimad_test.fragments.cats.CatDetailsFragment"
-        android:label="CatDetailsFragment" >
+        android:label="@string/title_cat" >
         <argument
             android:name="cat"
             app:argType="com.gimadeev.zimad_test.presentaion.binding.BindingPet" />

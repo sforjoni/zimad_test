@@ -110,8 +110,6 @@ public class NavigationUtils {
             }
         });
 
-        setupDeepLinks(navigationView, navGraphIds, tabPositionToGraphId, fragmentManager, containerId, intent);
-
         fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
@@ -131,23 +129,6 @@ public class NavigationUtils {
     public static void setupActionBarWithNavController(NavController navController, AppCompatActivity activity) {
         AppBarConfiguration configuration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(activity, navController, configuration);
-    }
-
-    private static void setupDeepLinks(TabLayout navigationView, List<Integer> navGraphIds, final SparseArray<Integer> tabPositionToGraphId, FragmentManager fragmentManager, Integer containerId, Intent intent ) {
-        for (int i = 0; i < navGraphIds.size(); ++i) {
-            String fragmentTag = getFragmentTag(i);
-            Integer id = navGraphIds.get(i);
-
-            NavHostFragment navHostFragment = obtainNavHostFragment(fragmentManager, fragmentTag, id, containerId);
-            if (navHostFragment.getNavController().handleDeepLink(intent)) {
-                for (int t = 0; t < tabPositionToGraphId.size(); ++t) {
-                    if (tabPositionToGraphId.get(t).equals(navHostFragment.getNavController().getGraph().getId())) {
-                        navigationView.getTabAt(t).select();
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     private static void detachNavHostFragment(FragmentManager fragmentManager, NavHostFragment navHostFragment) {
@@ -174,16 +155,6 @@ public class NavigationUtils {
                 .commitNow();
 
         return fragment;
-    }
-
-    private static Boolean isOnBackStack(FragmentManager fragmentManager, String backStackName) {
-        int backStackCount = fragmentManager.getBackStackEntryCount();
-        for (int i = 0; i < backStackCount; ++i) {
-            if (fragmentManager.getBackStackEntryAt(i).getName().equals(backStackName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static String getFragmentTag(Integer index) {

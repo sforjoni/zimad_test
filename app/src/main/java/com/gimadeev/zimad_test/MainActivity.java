@@ -82,11 +82,6 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (rootFragments.contains(navController.getValue().getCurrentDestination().getId())) {
             finish();
-            return;
-        }
-
-        if (!navController.getValue().popBackStack()) {
-            super.onBackPressed();
         }
     }
 }
